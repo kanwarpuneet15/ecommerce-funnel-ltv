@@ -29,7 +29,8 @@ EXPORTS = {
                      FROM core.fct_orders""",
     "funnel_daily": "SELECT * FROM mart.mart_funnel_daily",
     "channel_monthly": "SELECT * FROM mart.mart_channel_monthly",
-    "cohort_retention": "SELECT * FROM mart.mart_cohort_retention",
+    # 'All' rows are dropped: the BI tool aggregates channels itself (no selection = all customers)
+    "cohort_retention": "SELECT * FROM mart.mart_cohort_retention WHERE acquisition_channel <> 'All'",
     "customer_ltv": """SELECT user_id, cohort_month, date_trunc('quarter', cohort_month)::DATE AS cohort_quarter,
                               acquisition_channel, first_order_payment_type, acquired_in_sale,
                               CASE WHEN margin_to_date < 500 THEN '< ₹500' WHEN margin_to_date < 1000 THEN '₹500–1k'
@@ -41,7 +42,8 @@ EXPORTS = {
                               net_revenue_365d, orders_365d, margin_to_date, orders_to_date,
                               eligible_90d, eligible_180d, eligible_365d
                        FROM mart.mart_customer_ltv""",
-    "clv_predictions": "SELECT * FROM mart.mart_customer_clv_predictions",
+    "clv_predictions": """SELECT *, CASE value_segment WHEN 'VIP' THEN 1 WHEN 'High' THEN 2 WHEN 'Medium' THEN 3 ELSE 4 END AS segment_order
+                          FROM mart.mart_customer_clv_predictions""",
     "kpi_monthly": "SELECT * FROM mart.mart_kpi_monthly",
 }
 

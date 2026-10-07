@@ -32,7 +32,7 @@
             "dataType": "dateTime",
             "sourceColumn": "month_start",
             "summarizeBy": "none",
-            "formatString": "yyyy-mm-dd"
+            "formatString": "yyyy-mm"
           },
           {
             "name": "year_month",
@@ -184,7 +184,7 @@
             "dataType": "dateTime",
             "sourceColumn": "cohort_month",
             "summarizeBy": "none",
-            "formatString": "yyyy-mm-dd"
+            "formatString": "yyyy-mm"
           },
           {
             "name": "valid_orders",
@@ -287,7 +287,7 @@
             "dataType": "dateTime",
             "sourceColumn": "order_month",
             "summarizeBy": "none",
-            "formatString": "yyyy-mm-dd"
+            "formatString": "yyyy-mm"
           },
           {
             "name": "status",
@@ -590,7 +590,7 @@
         ],
         "measures": [
           {
-            "name": "Sessions",
+            "name": "Total Sessions",
             "expression": "SUM(funnel_daily[sessions])",
             "formatString": "#,0",
             "displayFolder": "Funnel"
@@ -621,7 +621,7 @@
           },
           {
             "name": "Conversion Rate",
-            "expression": "DIVIDE([Purchase Sessions], [Sessions])",
+            "expression": "DIVIDE([Purchase Sessions], [Total Sessions])",
             "formatString": "0.00%",
             "displayFolder": "Funnel",
             "description": "Sessions with a purchase / non-bot sessions."
@@ -646,13 +646,13 @@
           },
           {
             "name": "Stage Sessions",
-            "expression": "SWITCH(SELECTEDVALUE(funnel_stage[stage_order]), 1, [Sessions], 2, [Product View Sessions], 3, [Cart Sessions], 4, [Checkout Sessions], 5, [Purchase Sessions])",
+            "expression": "SWITCH(SELECTEDVALUE(funnel_stage[stage_order]), 1, [Total Sessions], 2, [Product View Sessions], 3, [Cart Sessions], 4, [Checkout Sessions], 5, [Purchase Sessions])",
             "formatString": "#,0",
             "displayFolder": "Funnel"
           },
           {
             "name": "Stage % of Sessions",
-            "expression": "DIVIDE([Stage Sessions], [Sessions])",
+            "expression": "DIVIDE([Stage Sessions], [Total Sessions])",
             "formatString": "0.0%",
             "displayFolder": "Funnel"
           }
@@ -683,7 +683,7 @@
             "dataType": "dateTime",
             "sourceColumn": "month_start",
             "summarizeBy": "none",
-            "formatString": "yyyy-mm-dd"
+            "formatString": "yyyy-mm"
           },
           {
             "name": "channel",
@@ -774,9 +774,10 @@
           },
           {
             "name": "LTV:CAC (12m margin)",
-            "expression": "DIVIDE([LTV 12m Margin], [CAC])",
+            "expression": "DIVIDE(CALCULATE([LTV 12m Margin], customer_ltv[acquisition_channel] IN {\"Paid Search\", \"Paid Social\", \"Affiliate\"}), [CAC])",
             "formatString": "0.00\"×\"",
-            "displayFolder": "Acquisition"
+            "displayFolder": "Acquisition",
+            "description": "12-month margin LTV of customers acquired by paid channels / paid CAC."
           }
         ],
         "partitions": [
@@ -805,7 +806,7 @@
             "dataType": "dateTime",
             "sourceColumn": "cohort_month",
             "summarizeBy": "none",
-            "formatString": "yyyy-mm-dd"
+            "formatString": "yyyy-mm"
           },
           {
             "name": "acquisition_channel",
@@ -909,14 +910,14 @@
             "dataType": "dateTime",
             "sourceColumn": "cohort_month",
             "summarizeBy": "none",
-            "formatString": "yyyy-mm-dd"
+            "formatString": "yyyy-mm"
           },
           {
             "name": "cohort_quarter",
             "dataType": "dateTime",
             "sourceColumn": "cohort_quarter",
             "summarizeBy": "none",
-            "formatString": "yyyy-mm-dd"
+            "formatString": "yyyy-mm"
           },
           {
             "name": "acquisition_channel",
@@ -1146,6 +1147,13 @@
             "name": "value_segment",
             "dataType": "string",
             "sourceColumn": "value_segment",
+            "summarizeBy": "none",
+            "sortByColumn": "segment_order"
+          },
+          {
+            "name": "segment_order",
+            "dataType": "int64",
+            "sourceColumn": "segment_order",
             "summarizeBy": "none"
           }
         ],
@@ -1185,7 +1193,7 @@
                 "let",
                 "    Source = Csv.Document(File.Contents(ExportFolder & \"clv_predictions.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
                 "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
-                "    Typed = Table.TransformColumnTypes(Promoted, {{\"user_id\", Int64.Type}, {\"acquisition_channel\", type text}, {\"repeat_orders\", Int64.Type}, {\"recency_weeks\", type number}, {\"age_weeks\", type number}, {\"margin_to_date\", type number}, {\"p_alive\", type number}, {\"expected_orders_12m\", type number}, {\"expected_margin_per_order\", type number}, {\"predicted_margin_next_12m\", type number}, {\"value_segment\", type text}}, \"en-US\")",
+                "    Typed = Table.TransformColumnTypes(Promoted, {{\"user_id\", Int64.Type}, {\"acquisition_channel\", type text}, {\"repeat_orders\", Int64.Type}, {\"recency_weeks\", type number}, {\"age_weeks\", type number}, {\"margin_to_date\", type number}, {\"p_alive\", type number}, {\"expected_orders_12m\", type number}, {\"expected_margin_per_order\", type number}, {\"predicted_margin_next_12m\", type number}, {\"value_segment\", type text}, {\"segment_order\", Int64.Type}}, \"en-US\")",
                 "in",
                 "    Typed"
               ]
@@ -1201,7 +1209,7 @@
             "dataType": "dateTime",
             "sourceColumn": "month_start",
             "summarizeBy": "none",
-            "formatString": "yyyy-mm-dd"
+            "formatString": "yyyy-mm"
           },
           {
             "name": "orders_placed",

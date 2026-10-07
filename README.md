@@ -125,7 +125,10 @@ Two fact grains are intentional: funnel questions live at the session level and 
 | 4 · Customer value & LTV | LTV vs CAC by channel; value distribution; predicted value segments |
 | 5 · Recommendations | What to do, in what order, and with what confidence |
 
-**Open it:** install Power BI Desktop (free) → double-click `Threadline.pbip` → if prompted, click **Refresh**. If the project folder isn't at `C:\Users\kanwa\Documents\ecommerce-funnel-ltv`, go to *Transform data → Edit parameters* and set `ExportFolder` to your `dashboard\exports\` path (ending in `\`), or regenerate with `python dashboard/build_pbip.py --export-folder "D:\path\to\dashboard\exports\\"`.
+<p align="center"><img src="docs/images/pbi_1_overview.png" width="49%"> <img src="docs/images/pbi_2_funnel.png" width="49%"></p>
+<p align="center"><img src="docs/images/pbi_3_cohorts.png" width="49%"> <img src="docs/images/pbi_4_ltv.png" width="49%"></p>
+
+**Open it:** install Power BI Desktop (free, Sept-2026 build or newer) → double-click `Threadline.pbip` → click **Refresh** on first open, then save. If the project folder isn't at `C:\Users\kanwa\Documents\ecommerce-funnel-ltv`, go to *Transform data → Edit parameters* and set `ExportFolder` to your `dashboard\exports\` path (ending in `\`), or regenerate with `python dashboard/build_pbip.py --export-folder "D:\path\to\dashboard\exports\\"`.
 
 ## 7. Validation
 

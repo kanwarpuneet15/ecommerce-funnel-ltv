@@ -67,7 +67,7 @@ def csv_table(name: str, measures=(), hidden=(), sort_by=None):
         col = {"name": c, "dataType": dt, "sourceColumn": c,
                "summarizeBy": "sum" if dt in ("double",) and not c.endswith("_id") else "none"}
         if dt == "dateTime":
-            col["formatString"] = "yyyy-mm-dd"
+            col["formatString"] = "yyyy-mm" if c.endswith(("_month", "_quarter")) or c == "month_start" else "yyyy-mm-dd"
         if c in hidden:
             col["isHidden"] = True
         if sort_by and c in sort_by:
@@ -122,18 +122,18 @@ orders_measures = [
     M("COD Share", "DIVIDE(CALCULATE(COUNTROWS(fct_orders), fct_orders[payment_type] = \"COD\"), COUNTROWS(fct_orders))", PCT, "Orders"),
 ]
 funnel_measures = [
-    M("Sessions", "SUM(funnel_daily[sessions])", NUM, "Funnel"),
+    M("Total Sessions", "SUM(funnel_daily[sessions])", NUM, "Funnel"),
     M("Product View Sessions", "SUM(funnel_daily[product_view_sessions])", NUM, "Funnel"),
     M("Cart Sessions", "SUM(funnel_daily[cart_sessions])", NUM, "Funnel"),
     M("Checkout Sessions", "SUM(funnel_daily[checkout_sessions])", NUM, "Funnel"),
     M("Purchase Sessions", "SUM(funnel_daily[purchase_sessions])", NUM, "Funnel"),
-    M("Conversion Rate", "DIVIDE([Purchase Sessions], [Sessions])", "0.00%", "Funnel", "Sessions with a purchase / non-bot sessions."),
+    M("Conversion Rate", "DIVIDE([Purchase Sessions], [Total Sessions])", "0.00%", "Funnel", "Sessions with a purchase / non-bot sessions."),
     M("Product View → Cart", "DIVIDE([Cart Sessions], [Product View Sessions])", PCT, "Funnel"),
     M("Cart → Checkout", "DIVIDE([Checkout Sessions], [Cart Sessions])", PCT, "Funnel"),
     M("Checkout → Purchase", "DIVIDE([Purchase Sessions], [Checkout Sessions])", PCT, "Funnel"),
-    M("Stage Sessions", "SWITCH(SELECTEDVALUE(funnel_stage[stage_order]), 1, [Sessions], 2, [Product View Sessions], "
+    M("Stage Sessions", "SWITCH(SELECTEDVALUE(funnel_stage[stage_order]), 1, [Total Sessions], 2, [Product View Sessions], "
       "3, [Cart Sessions], 4, [Checkout Sessions], 5, [Purchase Sessions])", NUM, "Funnel"),
-    M("Stage % of Sessions", "DIVIDE([Stage Sessions], [Sessions])", PCT, "Funnel"),
+    M("Stage % of Sessions", "DIVIDE([Stage Sessions], [Total Sessions])", PCT, "Funnel"),
 ]
 ltv_measures = [
     M("LTV 12m Margin", "CALCULATE(AVERAGE(customer_ltv[margin_365d]), customer_ltv[eligible_365d] = TRUE())", INR, "LTV",
@@ -151,7 +151,8 @@ channel_measures = [
     M("CAC", f"DIVIDE(CALCULATE(SUM(channel_monthly[spend_inr]), channel_monthly[channel] IN {PAID}), "
              f"CALCULATE(SUM(channel_monthly[new_customers]), channel_monthly[channel] IN {PAID}))", INR, "Acquisition",
       "Acquisition cost / new customers (first touch). Paid channels only; email platform fees are not acquisition cost."),
-    M("LTV:CAC (12m margin)", "DIVIDE([LTV 12m Margin], [CAC])", RATIO, "Acquisition"),
+    M("LTV:CAC (12m margin)", f"DIVIDE(CALCULATE([LTV 12m Margin], customer_ltv[acquisition_channel] IN {PAID}), [CAC])", RATIO, "Acquisition",
+      "12-month margin LTV of customers acquired by paid channels / paid CAC."),
 ]
 cohort_measures = [
     M("Retention %", "DIVIDE(SUM(cohort_retention[active_customers]), SUM(cohort_retention[cohort_size]))", PCT1, "Cohorts",
@@ -177,7 +178,7 @@ tables = [
     csv_table("channel_monthly", channel_measures),
     csv_table("cohort_retention", cohort_measures),
     csv_table("customer_ltv", ltv_measures, sort_by={"ltv_band": "ltv_band_order"}),
-    csv_table("clv_predictions", clv_measures),
+    csv_table("clv_predictions", clv_measures, sort_by={"value_segment": "segment_order"}),
     csv_table("kpi_monthly"),
     static_table("dim_channel", [("channel", "string"), ("channel_type", "string"), ("sort_order", "int64")],
                  CHANNELS, sort_by={"channel": "sort_order"}),
@@ -368,7 +369,7 @@ SYNTH = "Synthetic data · fictional brand Threadline · INR · margin = product
 
 # ---- Page 1: Executive overview ------------------------------------------------
 p1 = [
-    text(20, 8, 900, 52, [[("Executive overview", {"fontSize": "20pt", "fontWeight": "bold", "color": INK})],
+    text(20, 4, 900, 62, [[("Executive overview", {"fontSize": "16pt", "fontWeight": "bold", "color": INK})],
                           [("Last 12 complete months (Oct 2025 – Sep 2026; change in Filters pane) · " + SYNTH, NOTE)]]),
     slicer(1000, 12, 260, 46, "dim_channel.channel", "Acquisition / session channel"),
     card(20, 70, 170, 90, "fct_orders.[Net Revenue]", "Net revenue"),
@@ -377,13 +378,13 @@ p1 = [
     card(560, 70, 170, 90, "funnel_daily.[Conversion Rate]", "Session conversion"),
     card(740, 70, 170, 90, "fct_orders.[AOV]", "AOV"),
     card(920, 70, 170, 90, "fct_orders.[Repeat Order Share]", "Repeat order share"),
-    card(1100, 70, 160, 90, "customer_ltv.[LTV 12m Margin]", "12-month LTV (margin)"),
+    card(1100, 70, 160, 90, "customer_ltv.[LTV 12m Margin]", "12-mo margin LTV"),
     visual("lineChart", 20, 172, 620, 260, {"Category": ["dim_date.month_start"], "Y": ["fct_orders.[Net Revenue]"]},
            title="Net revenue by month", sort=("dim_date.month_start", "asc"),
            objects={"dataPoint": [{"properties": {"fill": color(BLUE)}}]}),
     visual("funnel", 650, 172, 610, 260, {"Category": ["funnel_stage.stage"], "Y": ["funnel_daily.[Stage Sessions]"]},
            title="Session funnel: sessions reaching each stage", sort=("funnel_stage.stage", "asc"),
-           objects={"dataPoint": [{"properties": {"fill": color(BLUE)}}]}),
+           objects={"dataPoint": [{"properties": {"fill": color(BLUE)}}], "labels": [{"properties": {"labelDisplayUnits": lit(1)}}]}),
     visual("clusteredBarChart", 20, 444, 400, 260, {"Category": ["dim_channel.channel"], "Y": ["fct_orders.[New Customers]"]},
            title="New customers by acquisition channel", sort=("fct_orders.[New Customers]", "desc"),
            objects={"dataPoint": series_colors("dim_channel.channel", CH_COLORS)}),
@@ -400,7 +401,7 @@ p1 = [
 
 # ---- Page 2: Funnel ---------------------------------------------------------------
 p2 = [
-    text(20, 8, 760, 52, [[("Funnel: where do we lose buyers?", {"fontSize": "20pt", "fontWeight": "bold", "color": INK})],
+    text(20, 4, 760, 62, [[("Funnel: where do we lose buyers?", {"fontSize": "16pt", "fontWeight": "bold", "color": INK})],
                           [("Non-bot sessions; stage = reached this stage or later · " + SYNTH, NOTE)]]),
     slicer(790, 12, 150, 46, "dim_channel.channel", "Channel"),
     slicer(950, 12, 150, 46, "funnel_daily.device_type", "Device"),
@@ -411,10 +412,12 @@ p2 = [
     card(950, 70, 310, 80, "funnel_daily.[Checkout → Purchase]", "Checkout → purchase"),
     visual("funnel", 20, 162, 500, 270, {"Category": ["funnel_stage.stage"], "Y": ["funnel_daily.[Stage Sessions]"]},
            title="Sessions by stage", sort=("funnel_stage.stage", "asc"),
-           objects={"dataPoint": [{"properties": {"fill": color(BLUE)}}]}),
+           objects={"dataPoint": [{"properties": {"fill": color(BLUE)}}], "labels": [{"properties": {"labelDisplayUnits": lit(1)}}]}),
     visual("pivotTable", 530, 162, 730, 270, {"Rows": ["dim_channel.channel"], "Columns": ["funnel_daily.device_type"],
                                               "Values": ["funnel_daily.[Conversion Rate]"]},
-           title="Session conversion by channel × device"),
+           title="Session conversion by channel × device",
+           objects={"values": [{"properties": {"fontSize": lit(11)}}], "columnHeaders": [{"properties": {"fontSize": lit(11)}}],
+                    "rowHeaders": [{"properties": {"fontSize": lit(11)}}]}),
     visual("lineChart", 20, 444, 820, 260, {"Category": ["dim_date.month_start"], "Series": ["funnel_daily.device_type"],
                                             "Y": ["funnel_daily.[Checkout → Purchase]"]},
            title="Checkout → purchase by month and device (mobile redesign shipped Aug 2025)",
@@ -441,9 +444,9 @@ month_filter = [{"name": uuid.uuid4().hex[:20], "expression": {"Column": {"Expre
                      "Right": {"Comparison": {"ComparisonKind": 4, "Left": {"Column": {"Expression": {"SourceRef": {"Source": "c"}}, "Property": "month_offset"}}, "Right": {"Literal": {"Value": "12L"}}}}}}}]},
                  "type": "Advanced", "howCreated": 1}]
 p3 = [
-    text(20, 8, 900, 52, [[("Cohorts: do customers come back?", {"fontSize": "20pt", "fontWeight": "bold", "color": INK})],
+    text(20, 4, 900, 62, [[("Cohorts: do customers come back?", {"fontSize": "16pt", "fontWeight": "bold", "color": INK})],
                           [("Cohort = month of first valid order · retention = % of cohort ordering in month k · fully observed months only · " + SYNTH, NOTE)]]),
-    slicer(1000, 12, 260, 46, "cohort_retention.acquisition_channel", "Cohort channel (pick one; 'All' = everyone)"),
+    slicer(1000, 12, 260, 46, "cohort_retention.acquisition_channel", "Acquisition channel (blank = all customers)"),
     visual("pivotTable", 20, 70, 760, 634, {"Rows": ["cohort_retention.cohort_month"], "Columns": ["cohort_retention.month_offset"],
                                             "Values": ["cohort_retention.[Retention %]"]},
            title="Monthly retention by first-order cohort (months 1–12)", objects=heat, filters=month_filter),
@@ -462,7 +465,7 @@ p3 = [
 
 # ---- Page 4: Customer value & LTV ------------------------------------------------------
 p4 = [
-    text(20, 8, 900, 52, [[("Customer value: LTV, CAC and who to keep", {"fontSize": "20pt", "fontWeight": "bold", "color": INK})],
+    text(20, 4, 900, 62, [[("Customer value: LTV, CAC and who to keep", {"fontSize": "16pt", "fontWeight": "bold", "color": INK})],
                           [("LTV = avg gross margin within 365 days of first order (complete windows only). CAC = paid acquisition cost / new customers · " + SYNTH, NOTE)]]),
     slicer(1000, 12, 260, 46, "dim_channel.channel", "Acquisition channel"),
     card(20, 70, 240, 80, "customer_ltv.[LTV 12m Margin]", "12-month margin LTV"),
@@ -480,7 +483,7 @@ p4 = [
            objects={"dataPoint": [{"properties": {"fill": color(BLUE)}}]}),
     visual("lineChart", 20, 444, 620, 260, {"Category": ["customer_ltv.cohort_quarter"], "Y": ["customer_ltv.[LTV 90d Margin]"]},
            title="90-day margin LTV by cohort quarter: stable over time", sort=("customer_ltv.cohort_quarter", "asc"),
-           objects={"dataPoint": [{"properties": {"fill": color(BLUE)}}]}),
+           objects={"dataPoint": [{"properties": {"fill": color(BLUE)}}], "valueAxis": [{"properties": {"start": lit(0)}}]}),
     visual("tableEx", 650, 444, 610, 260, {"Values": ["clv_predictions.value_segment", "clv_predictions.[Scored Customers]",
                                                       "clv_predictions.[Predicted Margin Next 12m]", "clv_predictions.[Total Predicted Margin]",
                                                       "clv_predictions.[Avg P(alive)]"]},
@@ -490,7 +493,7 @@ p4 = [
 # ---- Page 5: Recommendations --------------------------------------------------------------
 B = {"fontSize": "11pt", "fontWeight": "bold", "color": INK}
 p5 = [
-    text(20, 8, 1240, 52, [[("Recommendations", {"fontSize": "20pt", "fontWeight": "bold", "color": INK})],
+    text(20, 4, 1240, 62, [[("Recommendations", {"fontSize": "16pt", "fontWeight": "bold", "color": INK})],
                            [("Prioritised by impact × effort × confidence. Impacts are labelled scenarios, not forecasts · " + SYNTH, NOTE)]]),
     text(20, 70, 610, 300, [
         [("1 · Re-base Paid Social on value, not volume (do now)", B)],
@@ -521,11 +524,24 @@ p5 = [
           "Limitations: synthetic data; observational causality; predictive model over-predicts ~13% (use for ranking).", NOTE)]], bg="#FFFFFF"),
 ]
 
+THEME = {
+    "name": "Threadline",
+    "dataColors": [BLUE, ORANGE, AQUA, YELLOW, MAGENTA, GREEN, VIOLET, RED],
+    "background": "#FFFFFF", "foreground": INK, "tableAccent": BLUE,
+    "textClasses": {"title": {"fontFace": "Segoe UI Semibold", "fontSize": 11, "color": INK},
+                    "label": {"fontFace": "Segoe UI", "fontSize": 9, "color": INK2},
+                    "callout": {"fontFace": "Segoe UI Semibold", "fontSize": 20, "color": INK}},
+}
+THEME_FILE = "Threadline.json"
+
 report = {
-    "config": json.dumps({"version": "5.59", "activeSectionIndex": 0, "linguisticSchemaSyncVersion": 0,
+    "config": json.dumps({"version": "5.59", "themeCollection": {"customTheme": {"name": THEME_FILE, "version": "5.59", "type": 1}},
+                          "activeSectionIndex": 0, "linguisticSchemaSyncVersion": 0,
                           "settings": {"useStylableVisualContainerHeader": True, "exportDataMode": 1},
                           "objects": {"outspacePane": [{"properties": {"expanded": lit(False)}}]}}),
     "layoutOptimization": 0,
+    "resourcePackages": [{"resourcePackage": {"name": "RegisteredResources", "type": 1, "disabled": False,
+                                              "items": [{"name": THEME_FILE, "path": THEME_FILE, "type": 202}]}}],
     "sections": [
         {**page("ReportSection1", "1 · Executive overview", p1, date_filter()), "ordinal": 0},
         {**page("ReportSection2", "2 · Funnel", p2, p2_filters), "ordinal": 1},
@@ -552,6 +568,8 @@ if __name__ == "__main__":
     (sm / "model.bim").write_text(json.dumps(model, indent=2, ensure_ascii=False), encoding="utf-8")
     (rp / "definition.pbir").write_text(json.dumps({"version": "1.0", "datasetReference": {"byPath": {"path": f"../{NAME}.SemanticModel"},
                                                                                          "byConnection": None}}, indent=2), encoding="utf-8")
+    (rp / "StaticResources" / "RegisteredResources").mkdir(parents=True)
+    (rp / "StaticResources" / "RegisteredResources" / THEME_FILE).write_text(json.dumps(THEME, indent=2), encoding="utf-8")
     (rp / "report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     (OUT / ".gitignore").write_text("**/.pbi/localSettings.json\n**/.pbi/cache.abf\n", encoding="utf-8")
     n_vis = sum(len(s["visualContainers"]) for s in report["sections"])
