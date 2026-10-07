@@ -1,0 +1,15 @@
+# Large / regenerable data (rebuild with: python run_all.py)
+data/raw/
+data/processed/
+data/warehouse.duckdb
+data/warehouse.duckdb.wal
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+# Power BI local files
+dashboard/powerbi/**/.pbi/localSettings.json
+dashboard/powerbi/**/.pbi/cache.abf
+# Secrets (none are used, but never commit them)
+.env

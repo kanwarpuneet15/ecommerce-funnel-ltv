@@ -1,0 +1,5 @@
+platform,channel,cost_type
+google_ads,Paid Search,media
+meta_ads,Paid Social,media
+affiliate_network,Affiliate,commission
+email_platform,Email,platform_fee

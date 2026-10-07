@@ -1,0 +1,7 @@
+payment_type,city_tier,orders_placed,rto_rate,cancel_rate,gross_value_lost_to_rto,customers_365d,repeat_rate_365d,ltv_margin_365d
+COD,Metro,3736,0.201,0.063,1656328,1146,0.258,1369.0
+Prepaid,Metro,10592,0.021,0.029,495411,3552,0.277,1375.0
+COD,Tier 2,4437,0.203,0.054,1909246,1296,0.27,1363.0
+Prepaid,Tier 2,6861,0.02,0.029,303323,2363,0.274,1402.0
+COD,Tier 3,3139,0.266,0.064,1716855,820,0.282,1276.0
+Prepaid,Tier 3,3391,0.024,0.032,180174,1154,0.295,1420.0

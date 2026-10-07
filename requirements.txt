@@ -1,0 +1,8 @@
+# Tested with Python 3.13, pandas 3.0, numpy 2.5, scipy 1.18, matplotlib 3.11, DuckDB 1.3
+duckdb>=1.3
+pandas>=2.2
+numpy>=1.26
+scipy>=1.11
+matplotlib>=3.8
+# optional: open/re-run the notebooks interactively
+jupyterlab>=4.0

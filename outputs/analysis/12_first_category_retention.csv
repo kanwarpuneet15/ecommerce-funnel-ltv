@@ -1,0 +1,9 @@
+first_order_category,customers,repeat_rate_365d,vs_average,first_order_margin,ltv_margin_365d,ltv_rank
+Outerwear,776,0.256,-0.019,1811.0,2346.0,1
+Shoes,1074,0.267,-0.008,1375.0,1844.0,2
+Dresses,1351,0.258,-0.018,1126.0,1622.0,3
+Bottoms,1686,0.272,-0.004,936.0,1344.0,4
+Activewear,1106,0.28,0.005,863.0,1311.0,5
+Basics,1138,0.337,0.061,607.0,1141.0,6
+Tops,2315,0.269,-0.007,660.0,1071.0,7
+Accessories,885,0.272,-0.003,437.0,825.0,8

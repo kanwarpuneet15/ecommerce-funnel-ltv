@@ -1,0 +1,3 @@
+period,spend,new_customers,cpc,average_cac,marginal_cac,ltv_margin_90d,repeat_rate_90d,cod_share
+A: before ramp (Mar24-Feb25),1369730.0,1441,11.4,951.0,,972.0,0.096,0.379
+B: after ramp (Jun25-May26),3035780.0,2774,15.16,1094.0,1250.0,1027.0,0.106,0.403

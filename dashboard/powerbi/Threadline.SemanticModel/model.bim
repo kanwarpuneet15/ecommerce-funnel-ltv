@@ -1,0 +1,1521 @@
+{
+  "name": "Threadline",
+  "compatibilityLevel": 1567,
+  "model": {
+    "culture": "en-US",
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "sourceQueryCulture": "en-US",
+    "tables": [
+      {
+        "name": "dim_date",
+        "columns": [
+          {
+            "name": "date_day",
+            "dataType": "dateTime",
+            "sourceColumn": "date_day",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "week_start",
+            "dataType": "dateTime",
+            "sourceColumn": "week_start",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "month_start",
+            "dataType": "dateTime",
+            "sourceColumn": "month_start",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "year_month",
+            "dataType": "string",
+            "sourceColumn": "year_month",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "year",
+            "dataType": "int64",
+            "sourceColumn": "year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "quarter",
+            "dataType": "int64",
+            "sourceColumn": "quarter",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "day_name",
+            "dataType": "string",
+            "sourceColumn": "day_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_weekend",
+            "dataType": "boolean",
+            "sourceColumn": "is_weekend",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_sale_day",
+            "dataType": "boolean",
+            "sourceColumn": "is_sale_day",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "sale_name",
+            "dataType": "string",
+            "sourceColumn": "sale_name",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "sale_type",
+            "dataType": "string",
+            "sourceColumn": "sale_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_complete_month",
+            "dataType": "boolean",
+            "sourceColumn": "is_complete_month",
+            "summarizeBy": "none"
+          }
+        ],
+        "measures": [],
+        "partitions": [
+          {
+            "name": "dim_date",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(ExportFolder & \"dim_date.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
+                "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
+                "    Typed = Table.TransformColumnTypes(Promoted, {{\"date_day\", type date}, {\"week_start\", type date}, {\"month_start\", type date}, {\"year_month\", type text}, {\"year\", Int64.Type}, {\"quarter\", Int64.Type}, {\"day_name\", type text}, {\"is_weekend\", type logical}, {\"is_sale_day\", type logical}, {\"sale_name\", type text}, {\"sale_type\", type text}, {\"is_complete_month\", type logical}}, \"en-US\")",
+                "in",
+                "    Typed"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_customers",
+        "columns": [
+          {
+            "name": "user_id",
+            "dataType": "int64",
+            "sourceColumn": "user_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "signup_ts",
+            "dataType": "dateTime",
+            "sourceColumn": "signup_ts",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "gender",
+            "dataType": "string",
+            "sourceColumn": "gender",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "age_band",
+            "dataType": "string",
+            "sourceColumn": "age_band",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "city",
+            "dataType": "string",
+            "sourceColumn": "city",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "state",
+            "dataType": "string",
+            "sourceColumn": "state",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "city_tier",
+            "dataType": "string",
+            "sourceColumn": "city_tier",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "acquisition_channel",
+            "dataType": "string",
+            "sourceColumn": "acquisition_channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "acquisition_device",
+            "dataType": "string",
+            "sourceColumn": "acquisition_device",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_customer",
+            "dataType": "boolean",
+            "sourceColumn": "is_customer",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "first_order_ts",
+            "dataType": "dateTime",
+            "sourceColumn": "first_order_ts",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "cohort_month",
+            "dataType": "dateTime",
+            "sourceColumn": "cohort_month",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "valid_orders",
+            "dataType": "int64",
+            "sourceColumn": "valid_orders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_repeat_customer",
+            "dataType": "boolean",
+            "sourceColumn": "is_repeat_customer",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "net_revenue_to_date",
+            "dataType": "double",
+            "sourceColumn": "net_revenue_to_date",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "gross_margin_to_date",
+            "dataType": "double",
+            "sourceColumn": "gross_margin_to_date",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "first_order_payment_type",
+            "dataType": "string",
+            "sourceColumn": "first_order_payment_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "acquired_in_sale",
+            "dataType": "boolean",
+            "sourceColumn": "acquired_in_sale",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "first_order_category",
+            "dataType": "string",
+            "sourceColumn": "first_order_category",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "first_order_had_return",
+            "dataType": "boolean",
+            "sourceColumn": "first_order_had_return",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "ever_rto",
+            "dataType": "boolean",
+            "sourceColumn": "ever_rto",
+            "summarizeBy": "none"
+          }
+        ],
+        "measures": [],
+        "partitions": [
+          {
+            "name": "dim_customers",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(ExportFolder & \"dim_customers.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
+                "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
+                "    Typed = Table.TransformColumnTypes(Promoted, {{\"user_id\", Int64.Type}, {\"signup_ts\", type datetime}, {\"gender\", type text}, {\"age_band\", type text}, {\"city\", type text}, {\"state\", type text}, {\"city_tier\", type text}, {\"acquisition_channel\", type text}, {\"acquisition_device\", type text}, {\"is_customer\", type logical}, {\"first_order_ts\", type datetime}, {\"cohort_month\", type date}, {\"valid_orders\", Int64.Type}, {\"is_repeat_customer\", type logical}, {\"net_revenue_to_date\", type number}, {\"gross_margin_to_date\", type number}, {\"first_order_payment_type\", type text}, {\"acquired_in_sale\", type logical}, {\"first_order_category\", type text}, {\"first_order_had_return\", type logical}, {\"ever_rto\", type logical}}, \"en-US\")",
+                "in",
+                "    Typed"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "fct_orders",
+        "columns": [
+          {
+            "name": "order_id",
+            "dataType": "int64",
+            "sourceColumn": "order_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "user_id",
+            "dataType": "int64",
+            "sourceColumn": "user_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_date",
+            "dataType": "dateTime",
+            "sourceColumn": "order_date",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "order_month",
+            "dataType": "dateTime",
+            "sourceColumn": "order_month",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "status",
+            "dataType": "string",
+            "sourceColumn": "status",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "payment_type",
+            "dataType": "string",
+            "sourceColumn": "payment_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_discounted",
+            "dataType": "boolean",
+            "sourceColumn": "is_discounted",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_sale_order",
+            "dataType": "boolean",
+            "sourceColumn": "is_sale_order",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_valid_order",
+            "dataType": "boolean",
+            "sourceColumn": "is_valid_order",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_cancelled",
+            "dataType": "boolean",
+            "sourceColumn": "is_cancelled",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_rto",
+            "dataType": "boolean",
+            "sourceColumn": "is_rto",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_in_flight",
+            "dataType": "boolean",
+            "sourceColumn": "is_in_flight",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "has_return",
+            "dataType": "boolean",
+            "sourceColumn": "has_return",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "units",
+            "dataType": "int64",
+            "sourceColumn": "units",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "gmv",
+            "dataType": "double",
+            "sourceColumn": "gmv",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "discount_amount",
+            "dataType": "double",
+            "sourceColumn": "discount_amount",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "gross_revenue",
+            "dataType": "double",
+            "sourceColumn": "gross_revenue",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "returned_revenue",
+            "dataType": "double",
+            "sourceColumn": "returned_revenue",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "net_revenue",
+            "dataType": "double",
+            "sourceColumn": "net_revenue",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "cogs",
+            "dataType": "double",
+            "sourceColumn": "cogs",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "gross_margin",
+            "dataType": "double",
+            "sourceColumn": "gross_margin",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "gross_revenue_placed",
+            "dataType": "double",
+            "sourceColumn": "gross_revenue_placed",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "customer_order_number",
+            "dataType": "int64",
+            "sourceColumn": "customer_order_number",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_first_order",
+            "dataType": "boolean",
+            "sourceColumn": "is_first_order",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_session_channel",
+            "dataType": "string",
+            "sourceColumn": "order_session_channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_session_device",
+            "dataType": "string",
+            "sourceColumn": "order_session_device",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "acquisition_channel",
+            "dataType": "string",
+            "sourceColumn": "acquisition_channel",
+            "summarizeBy": "none"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Net Revenue",
+            "expression": "SUM(fct_orders[net_revenue])",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "Revenue",
+            "description": "Item revenue after discounts minus returns; excludes cancelled/RTO orders and shipping."
+          },
+          {
+            "name": "Gross Revenue",
+            "expression": "SUM(fct_orders[gross_revenue])",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "Revenue"
+          },
+          {
+            "name": "Gross Margin",
+            "expression": "SUM(fct_orders[gross_margin])",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "Revenue",
+            "description": "Net revenue minus cost of goods kept."
+          },
+          {
+            "name": "Gross Margin %",
+            "expression": "DIVIDE([Gross Margin], [Net Revenue])",
+            "formatString": "0.0%",
+            "displayFolder": "Revenue"
+          },
+          {
+            "name": "Valid Orders",
+            "expression": "CALCULATE(COUNTROWS(fct_orders), fct_orders[is_valid_order] = TRUE())",
+            "formatString": "#,0",
+            "displayFolder": "Orders"
+          },
+          {
+            "name": "AOV",
+            "expression": "DIVIDE([Gross Revenue], [Valid Orders])",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "Orders",
+            "description": "Gross revenue per valid order (before returns)."
+          },
+          {
+            "name": "Active Customers",
+            "expression": "CALCULATE(DISTINCTCOUNT(fct_orders[user_id]), fct_orders[is_valid_order] = TRUE())",
+            "formatString": "#,0",
+            "displayFolder": "Customers"
+          },
+          {
+            "name": "New Customers",
+            "expression": "CALCULATE(COUNTROWS(fct_orders), fct_orders[is_first_order] = TRUE())",
+            "formatString": "#,0",
+            "displayFolder": "Customers"
+          },
+          {
+            "name": "Repeat Order Share",
+            "expression": "DIVIDE(CALCULATE([Valid Orders], fct_orders[customer_order_number] > 1), [Valid Orders])",
+            "formatString": "0.0%",
+            "displayFolder": "Orders"
+          },
+          {
+            "name": "RTO Rate",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(fct_orders), fct_orders[is_rto] = TRUE()), COUNTROWS(fct_orders))",
+            "formatString": "0.0%",
+            "displayFolder": "Orders"
+          },
+          {
+            "name": "Return Rate (value)",
+            "expression": "DIVIDE(SUM(fct_orders[returned_revenue]), [Gross Revenue])",
+            "formatString": "0.0%",
+            "displayFolder": "Orders"
+          },
+          {
+            "name": "COD Share",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(fct_orders), fct_orders[payment_type] = \"COD\"), COUNTROWS(fct_orders))",
+            "formatString": "0.0%",
+            "displayFolder": "Orders"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fct_orders",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(ExportFolder & \"fct_orders.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
+                "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
+                "    Typed = Table.TransformColumnTypes(Promoted, {{\"order_id\", Int64.Type}, {\"user_id\", Int64.Type}, {\"order_date\", type date}, {\"order_month\", type date}, {\"status\", type text}, {\"payment_type\", type text}, {\"is_discounted\", type logical}, {\"is_sale_order\", type logical}, {\"is_valid_order\", type logical}, {\"is_cancelled\", type logical}, {\"is_rto\", type logical}, {\"is_in_flight\", type logical}, {\"has_return\", type logical}, {\"units\", Int64.Type}, {\"gmv\", type number}, {\"discount_amount\", type number}, {\"gross_revenue\", type number}, {\"returned_revenue\", type number}, {\"net_revenue\", type number}, {\"cogs\", type number}, {\"gross_margin\", type number}, {\"gross_revenue_placed\", type number}, {\"customer_order_number\", Int64.Type}, {\"is_first_order\", type logical}, {\"order_session_channel\", type text}, {\"order_session_device\", type text}, {\"acquisition_channel\", type text}}, \"en-US\")",
+                "in",
+                "    Typed"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "funnel_daily",
+        "columns": [
+          {
+            "name": "session_date",
+            "dataType": "dateTime",
+            "sourceColumn": "session_date",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "channel",
+            "dataType": "string",
+            "sourceColumn": "channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "device_type",
+            "dataType": "string",
+            "sourceColumn": "device_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "visitor_type",
+            "dataType": "string",
+            "sourceColumn": "visitor_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_sale_day",
+            "dataType": "boolean",
+            "sourceColumn": "is_sale_day",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "sessions",
+            "dataType": "int64",
+            "sourceColumn": "sessions",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "product_view_sessions",
+            "dataType": "int64",
+            "sourceColumn": "product_view_sessions",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "cart_sessions",
+            "dataType": "int64",
+            "sourceColumn": "cart_sessions",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "checkout_sessions",
+            "dataType": "int64",
+            "sourceColumn": "checkout_sessions",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "purchase_sessions",
+            "dataType": "int64",
+            "sourceColumn": "purchase_sessions",
+            "summarizeBy": "none"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Sessions",
+            "expression": "SUM(funnel_daily[sessions])",
+            "formatString": "#,0",
+            "displayFolder": "Funnel"
+          },
+          {
+            "name": "Product View Sessions",
+            "expression": "SUM(funnel_daily[product_view_sessions])",
+            "formatString": "#,0",
+            "displayFolder": "Funnel"
+          },
+          {
+            "name": "Cart Sessions",
+            "expression": "SUM(funnel_daily[cart_sessions])",
+            "formatString": "#,0",
+            "displayFolder": "Funnel"
+          },
+          {
+            "name": "Checkout Sessions",
+            "expression": "SUM(funnel_daily[checkout_sessions])",
+            "formatString": "#,0",
+            "displayFolder": "Funnel"
+          },
+          {
+            "name": "Purchase Sessions",
+            "expression": "SUM(funnel_daily[purchase_sessions])",
+            "formatString": "#,0",
+            "displayFolder": "Funnel"
+          },
+          {
+            "name": "Conversion Rate",
+            "expression": "DIVIDE([Purchase Sessions], [Sessions])",
+            "formatString": "0.00%",
+            "displayFolder": "Funnel",
+            "description": "Sessions with a purchase / non-bot sessions."
+          },
+          {
+            "name": "Product View → Cart",
+            "expression": "DIVIDE([Cart Sessions], [Product View Sessions])",
+            "formatString": "0.0%",
+            "displayFolder": "Funnel"
+          },
+          {
+            "name": "Cart → Checkout",
+            "expression": "DIVIDE([Checkout Sessions], [Cart Sessions])",
+            "formatString": "0.0%",
+            "displayFolder": "Funnel"
+          },
+          {
+            "name": "Checkout → Purchase",
+            "expression": "DIVIDE([Purchase Sessions], [Checkout Sessions])",
+            "formatString": "0.0%",
+            "displayFolder": "Funnel"
+          },
+          {
+            "name": "Stage Sessions",
+            "expression": "SWITCH(SELECTEDVALUE(funnel_stage[stage_order]), 1, [Sessions], 2, [Product View Sessions], 3, [Cart Sessions], 4, [Checkout Sessions], 5, [Purchase Sessions])",
+            "formatString": "#,0",
+            "displayFolder": "Funnel"
+          },
+          {
+            "name": "Stage % of Sessions",
+            "expression": "DIVIDE([Stage Sessions], [Sessions])",
+            "formatString": "0.0%",
+            "displayFolder": "Funnel"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "funnel_daily",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(ExportFolder & \"funnel_daily.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
+                "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
+                "    Typed = Table.TransformColumnTypes(Promoted, {{\"session_date\", type date}, {\"channel\", type text}, {\"device_type\", type text}, {\"visitor_type\", type text}, {\"is_sale_day\", type logical}, {\"sessions\", Int64.Type}, {\"product_view_sessions\", Int64.Type}, {\"cart_sessions\", Int64.Type}, {\"checkout_sessions\", Int64.Type}, {\"purchase_sessions\", Int64.Type}}, \"en-US\")",
+                "in",
+                "    Typed"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "channel_monthly",
+        "columns": [
+          {
+            "name": "month_start",
+            "dataType": "dateTime",
+            "sourceColumn": "month_start",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "channel",
+            "dataType": "string",
+            "sourceColumn": "channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "sessions",
+            "dataType": "int64",
+            "sourceColumn": "sessions",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "new_visitors",
+            "dataType": "int64",
+            "sourceColumn": "new_visitors",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "purchase_sessions",
+            "dataType": "int64",
+            "sourceColumn": "purchase_sessions",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "new_customers",
+            "dataType": "int64",
+            "sourceColumn": "new_customers",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "first_order_net_revenue",
+            "dataType": "double",
+            "sourceColumn": "first_order_net_revenue",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "last_click_orders",
+            "dataType": "int64",
+            "sourceColumn": "last_click_orders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "last_click_net_revenue",
+            "dataType": "double",
+            "sourceColumn": "last_click_net_revenue",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "spend_inr",
+            "dataType": "double",
+            "sourceColumn": "spend_inr",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "paid_clicks",
+            "dataType": "int64",
+            "sourceColumn": "paid_clicks",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "cac_inr",
+            "dataType": "double",
+            "sourceColumn": "cac_inr",
+            "summarizeBy": "sum"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Marketing Spend",
+            "expression": "SUM(channel_monthly[spend_inr])",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "Acquisition"
+          },
+          {
+            "name": "Acquired Customers",
+            "expression": "SUM(channel_monthly[new_customers])",
+            "formatString": "#,0",
+            "displayFolder": "Acquisition"
+          },
+          {
+            "name": "CAC",
+            "expression": "DIVIDE(CALCULATE(SUM(channel_monthly[spend_inr]), channel_monthly[channel] IN {\"Paid Search\", \"Paid Social\", \"Affiliate\"}), CALCULATE(SUM(channel_monthly[new_customers]), channel_monthly[channel] IN {\"Paid Search\", \"Paid Social\", \"Affiliate\"}))",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "Acquisition",
+            "description": "Acquisition cost / new customers (first touch). Paid channels only; email platform fees are not acquisition cost."
+          },
+          {
+            "name": "LTV:CAC (12m margin)",
+            "expression": "DIVIDE([LTV 12m Margin], [CAC])",
+            "formatString": "0.00\"×\"",
+            "displayFolder": "Acquisition"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "channel_monthly",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(ExportFolder & \"channel_monthly.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
+                "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
+                "    Typed = Table.TransformColumnTypes(Promoted, {{\"month_start\", type date}, {\"channel\", type text}, {\"sessions\", Int64.Type}, {\"new_visitors\", Int64.Type}, {\"purchase_sessions\", Int64.Type}, {\"new_customers\", Int64.Type}, {\"first_order_net_revenue\", type number}, {\"last_click_orders\", Int64.Type}, {\"last_click_net_revenue\", type number}, {\"spend_inr\", type number}, {\"paid_clicks\", Int64.Type}, {\"cac_inr\", type number}}, \"en-US\")",
+                "in",
+                "    Typed"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "cohort_retention",
+        "columns": [
+          {
+            "name": "cohort_month",
+            "dataType": "dateTime",
+            "sourceColumn": "cohort_month",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "acquisition_channel",
+            "dataType": "string",
+            "sourceColumn": "acquisition_channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "month_offset",
+            "dataType": "int64",
+            "sourceColumn": "month_offset",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "cohort_size",
+            "dataType": "int64",
+            "sourceColumn": "cohort_size",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "active_customers",
+            "dataType": "int64",
+            "sourceColumn": "active_customers",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "orders",
+            "dataType": "int64",
+            "sourceColumn": "orders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "net_revenue",
+            "dataType": "double",
+            "sourceColumn": "net_revenue",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "gross_margin",
+            "dataType": "double",
+            "sourceColumn": "gross_margin",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "retention_rate",
+            "dataType": "double",
+            "sourceColumn": "retention_rate",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "is_observable",
+            "dataType": "boolean",
+            "sourceColumn": "is_observable",
+            "summarizeBy": "none"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Retention %",
+            "expression": "DIVIDE(SUM(cohort_retention[active_customers]), SUM(cohort_retention[cohort_size]))",
+            "formatString": "0.0%",
+            "displayFolder": "Cohorts",
+            "description": "% of cohort placing a valid order in month k (observable months only)."
+          },
+          {
+            "name": "Cohort Customers",
+            "expression": "SUM(cohort_retention[cohort_size])",
+            "formatString": "#,0",
+            "displayFolder": "Cohorts"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "cohort_retention",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(ExportFolder & \"cohort_retention.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
+                "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
+                "    Typed = Table.TransformColumnTypes(Promoted, {{\"cohort_month\", type date}, {\"acquisition_channel\", type text}, {\"month_offset\", Int64.Type}, {\"cohort_size\", Int64.Type}, {\"active_customers\", Int64.Type}, {\"orders\", Int64.Type}, {\"net_revenue\", type number}, {\"gross_margin\", type number}, {\"retention_rate\", type number}, {\"is_observable\", type logical}}, \"en-US\")",
+                "in",
+                "    Typed"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "customer_ltv",
+        "columns": [
+          {
+            "name": "user_id",
+            "dataType": "int64",
+            "sourceColumn": "user_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "cohort_month",
+            "dataType": "dateTime",
+            "sourceColumn": "cohort_month",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "cohort_quarter",
+            "dataType": "dateTime",
+            "sourceColumn": "cohort_quarter",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "acquisition_channel",
+            "dataType": "string",
+            "sourceColumn": "acquisition_channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "first_order_payment_type",
+            "dataType": "string",
+            "sourceColumn": "first_order_payment_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "acquired_in_sale",
+            "dataType": "boolean",
+            "sourceColumn": "acquired_in_sale",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "ltv_band",
+            "dataType": "string",
+            "sourceColumn": "ltv_band",
+            "summarizeBy": "none",
+            "sortByColumn": "ltv_band_order"
+          },
+          {
+            "name": "ltv_band_order",
+            "dataType": "int64",
+            "sourceColumn": "ltv_band_order",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "net_revenue_first_order",
+            "dataType": "double",
+            "sourceColumn": "net_revenue_first_order",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "margin_first_order",
+            "dataType": "double",
+            "sourceColumn": "margin_first_order",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "margin_90d",
+            "dataType": "double",
+            "sourceColumn": "margin_90d",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "margin_180d",
+            "dataType": "double",
+            "sourceColumn": "margin_180d",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "margin_365d",
+            "dataType": "double",
+            "sourceColumn": "margin_365d",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "net_revenue_365d",
+            "dataType": "double",
+            "sourceColumn": "net_revenue_365d",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "orders_365d",
+            "dataType": "int64",
+            "sourceColumn": "orders_365d",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "margin_to_date",
+            "dataType": "double",
+            "sourceColumn": "margin_to_date",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "orders_to_date",
+            "dataType": "int64",
+            "sourceColumn": "orders_to_date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "eligible_90d",
+            "dataType": "boolean",
+            "sourceColumn": "eligible_90d",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "eligible_180d",
+            "dataType": "boolean",
+            "sourceColumn": "eligible_180d",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "eligible_365d",
+            "dataType": "boolean",
+            "sourceColumn": "eligible_365d",
+            "summarizeBy": "none"
+          }
+        ],
+        "measures": [
+          {
+            "name": "LTV 12m Margin",
+            "expression": "CALCULATE(AVERAGE(customer_ltv[margin_365d]), customer_ltv[eligible_365d] = TRUE())",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "LTV",
+            "description": "Avg gross margin within 365 days of first order; customers with a complete 365+30 day window only."
+          },
+          {
+            "name": "LTV 90d Margin",
+            "expression": "CALCULATE(AVERAGE(customer_ltv[margin_90d]), customer_ltv[eligible_90d] = TRUE())",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "LTV"
+          },
+          {
+            "name": "First Order Margin",
+            "expression": "AVERAGE(customer_ltv[margin_first_order])",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "LTV"
+          },
+          {
+            "name": "Repeat Rate 12m",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(customer_ltv), customer_ltv[eligible_365d] = TRUE(), customer_ltv[orders_365d] >= 2), CALCULATE(COUNTROWS(customer_ltv), customer_ltv[eligible_365d] = TRUE()))",
+            "formatString": "0.0%",
+            "displayFolder": "LTV"
+          },
+          {
+            "name": "Customers (LTV)",
+            "expression": "COUNTROWS(customer_ltv)",
+            "formatString": "#,0",
+            "displayFolder": "LTV"
+          },
+          {
+            "name": "Historical Margin per Customer",
+            "expression": "AVERAGE(customer_ltv[margin_to_date])",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "LTV"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "customer_ltv",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(ExportFolder & \"customer_ltv.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
+                "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
+                "    Typed = Table.TransformColumnTypes(Promoted, {{\"user_id\", Int64.Type}, {\"cohort_month\", type date}, {\"cohort_quarter\", type date}, {\"acquisition_channel\", type text}, {\"first_order_payment_type\", type text}, {\"acquired_in_sale\", type logical}, {\"ltv_band\", type text}, {\"ltv_band_order\", Int64.Type}, {\"net_revenue_first_order\", type number}, {\"margin_first_order\", type number}, {\"margin_90d\", type number}, {\"margin_180d\", type number}, {\"margin_365d\", type number}, {\"net_revenue_365d\", type number}, {\"orders_365d\", Int64.Type}, {\"margin_to_date\", type number}, {\"orders_to_date\", Int64.Type}, {\"eligible_90d\", type logical}, {\"eligible_180d\", type logical}, {\"eligible_365d\", type logical}}, \"en-US\")",
+                "in",
+                "    Typed"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "clv_predictions",
+        "columns": [
+          {
+            "name": "user_id",
+            "dataType": "int64",
+            "sourceColumn": "user_id",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "acquisition_channel",
+            "dataType": "string",
+            "sourceColumn": "acquisition_channel",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "repeat_orders",
+            "dataType": "int64",
+            "sourceColumn": "repeat_orders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "recency_weeks",
+            "dataType": "double",
+            "sourceColumn": "recency_weeks",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "age_weeks",
+            "dataType": "double",
+            "sourceColumn": "age_weeks",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "margin_to_date",
+            "dataType": "double",
+            "sourceColumn": "margin_to_date",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "p_alive",
+            "dataType": "double",
+            "sourceColumn": "p_alive",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "expected_orders_12m",
+            "dataType": "double",
+            "sourceColumn": "expected_orders_12m",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "expected_margin_per_order",
+            "dataType": "double",
+            "sourceColumn": "expected_margin_per_order",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "predicted_margin_next_12m",
+            "dataType": "double",
+            "sourceColumn": "predicted_margin_next_12m",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "value_segment",
+            "dataType": "string",
+            "sourceColumn": "value_segment",
+            "summarizeBy": "none"
+          }
+        ],
+        "measures": [
+          {
+            "name": "Predicted Margin Next 12m",
+            "expression": "AVERAGE(clv_predictions[predicted_margin_next_12m])",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "Predictive"
+          },
+          {
+            "name": "Total Predicted Margin",
+            "expression": "SUM(clv_predictions[predicted_margin_next_12m])",
+            "formatString": "\"₹\"#,0",
+            "displayFolder": "Predictive"
+          },
+          {
+            "name": "Avg P(alive)",
+            "expression": "AVERAGE(clv_predictions[p_alive])",
+            "formatString": "0.0%",
+            "displayFolder": "Predictive"
+          },
+          {
+            "name": "Scored Customers",
+            "expression": "COUNTROWS(clv_predictions)",
+            "formatString": "#,0",
+            "displayFolder": "Predictive"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "clv_predictions",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(ExportFolder & \"clv_predictions.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
+                "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
+                "    Typed = Table.TransformColumnTypes(Promoted, {{\"user_id\", Int64.Type}, {\"acquisition_channel\", type text}, {\"repeat_orders\", Int64.Type}, {\"recency_weeks\", type number}, {\"age_weeks\", type number}, {\"margin_to_date\", type number}, {\"p_alive\", type number}, {\"expected_orders_12m\", type number}, {\"expected_margin_per_order\", type number}, {\"predicted_margin_next_12m\", type number}, {\"value_segment\", type text}}, \"en-US\")",
+                "in",
+                "    Typed"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "kpi_monthly",
+        "columns": [
+          {
+            "name": "month_start",
+            "dataType": "dateTime",
+            "sourceColumn": "month_start",
+            "summarizeBy": "none",
+            "formatString": "yyyy-mm-dd"
+          },
+          {
+            "name": "orders_placed",
+            "dataType": "int64",
+            "sourceColumn": "orders_placed",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "valid_orders",
+            "dataType": "int64",
+            "sourceColumn": "valid_orders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "repeat_orders",
+            "dataType": "int64",
+            "sourceColumn": "repeat_orders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "active_customers",
+            "dataType": "int64",
+            "sourceColumn": "active_customers",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "new_customers",
+            "dataType": "int64",
+            "sourceColumn": "new_customers",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "gmv",
+            "dataType": "double",
+            "sourceColumn": "gmv",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "gross_revenue",
+            "dataType": "double",
+            "sourceColumn": "gross_revenue",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "returned_revenue",
+            "dataType": "double",
+            "sourceColumn": "returned_revenue",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "net_revenue",
+            "dataType": "double",
+            "sourceColumn": "net_revenue",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "gross_margin",
+            "dataType": "double",
+            "sourceColumn": "gross_margin",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "cancelled_orders",
+            "dataType": "int64",
+            "sourceColumn": "cancelled_orders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "rto_orders",
+            "dataType": "int64",
+            "sourceColumn": "rto_orders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "cod_orders",
+            "dataType": "int64",
+            "sourceColumn": "cod_orders",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "sessions",
+            "dataType": "int64",
+            "sourceColumn": "sessions",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "purchase_sessions",
+            "dataType": "int64",
+            "sourceColumn": "purchase_sessions",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "session_conversion_rate",
+            "dataType": "double",
+            "sourceColumn": "session_conversion_rate",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "aov_gross",
+            "dataType": "double",
+            "sourceColumn": "aov_gross",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "repeat_order_share",
+            "dataType": "double",
+            "sourceColumn": "repeat_order_share",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "return_rate_value",
+            "dataType": "double",
+            "sourceColumn": "return_rate_value",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "rto_rate",
+            "dataType": "double",
+            "sourceColumn": "rto_rate",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "marketing_spend",
+            "dataType": "double",
+            "sourceColumn": "marketing_spend",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "marketing_spend_pct_net_revenue",
+            "dataType": "double",
+            "sourceColumn": "marketing_spend_pct_net_revenue",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "is_complete_month",
+            "dataType": "boolean",
+            "sourceColumn": "is_complete_month",
+            "summarizeBy": "none"
+          }
+        ],
+        "measures": [],
+        "partitions": [
+          {
+            "name": "kpi_monthly",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Csv.Document(File.Contents(ExportFolder & \"kpi_monthly.csv\"), [Delimiter = \",\", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),",
+                "    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),",
+                "    Typed = Table.TransformColumnTypes(Promoted, {{\"month_start\", type date}, {\"orders_placed\", Int64.Type}, {\"valid_orders\", Int64.Type}, {\"repeat_orders\", Int64.Type}, {\"active_customers\", Int64.Type}, {\"new_customers\", Int64.Type}, {\"gmv\", type number}, {\"gross_revenue\", type number}, {\"returned_revenue\", type number}, {\"net_revenue\", type number}, {\"gross_margin\", type number}, {\"cancelled_orders\", Int64.Type}, {\"rto_orders\", Int64.Type}, {\"cod_orders\", Int64.Type}, {\"sessions\", Int64.Type}, {\"purchase_sessions\", Int64.Type}, {\"session_conversion_rate\", type number}, {\"aov_gross\", type number}, {\"repeat_order_share\", type number}, {\"return_rate_value\", type number}, {\"rto_rate\", type number}, {\"marketing_spend\", type number}, {\"marketing_spend_pct_net_revenue\", type number}, {\"is_complete_month\", type logical}}, \"en-US\")",
+                "in",
+                "    Typed"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "dim_channel",
+        "columns": [
+          {
+            "name": "channel",
+            "dataType": "string",
+            "sourceColumn": "channel",
+            "summarizeBy": "none",
+            "sortByColumn": "sort_order"
+          },
+          {
+            "name": "channel_type",
+            "dataType": "string",
+            "sourceColumn": "channel_type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "sort_order",
+            "dataType": "int64",
+            "sourceColumn": "sort_order",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_channel",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #table(type table [channel = text, channel_type = text, sort_order = Int64.Type], {{\"Paid Social\", \"Paid\", 1}, {\"Paid Search\", \"Paid\", 2}, {\"Affiliate\", \"Paid\", 3}, {\"Organic Search\", \"Unpaid\", 4}, {\"Direct\", \"Unpaid\", 5}, {\"Email\", \"Owned\", 6}, {\"Organic Social\", \"Unpaid\", 7}, {\"Referral\", \"Unpaid\", 8}, {\"Unattributed\", \"Unknown\", 9}, {\"Untracked\", \"Unknown\", 10}, {\"Other Campaign\", \"Unknown\", 11}})",
+                "in",
+                "    Source"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "funnel_stage",
+        "columns": [
+          {
+            "name": "stage",
+            "dataType": "string",
+            "sourceColumn": "stage",
+            "summarizeBy": "none",
+            "sortByColumn": "stage_order"
+          },
+          {
+            "name": "stage_order",
+            "dataType": "int64",
+            "sourceColumn": "stage_order",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "funnel_stage",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #table(type table [stage = text, stage_order = Int64.Type], {{\"1. Session\", 1}, {\"2. Product view\", 2}, {\"3. Add to cart\", 3}, {\"4. Checkout\", 4}, {\"5. Purchase\", 5}})",
+                "in",
+                "    Source"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "12371fbb-d376-5cf6-b5c7-9310a79d23f3",
+        "fromTable": "fct_orders",
+        "fromColumn": "order_date",
+        "toTable": "dim_date",
+        "toColumn": "date_day"
+      },
+      {
+        "name": "3fd57e21-9eb6-5a44-90cc-dfb5f5d24111",
+        "fromTable": "fct_orders",
+        "fromColumn": "user_id",
+        "toTable": "dim_customers",
+        "toColumn": "user_id"
+      },
+      {
+        "name": "8dd0faaa-8fa6-56bf-a6b8-5eeb3ac3c17c",
+        "fromTable": "funnel_daily",
+        "fromColumn": "session_date",
+        "toTable": "dim_date",
+        "toColumn": "date_day"
+      },
+      {
+        "name": "81b86c8f-41a7-51fb-916c-1d4eb51ca4f2",
+        "fromTable": "funnel_daily",
+        "fromColumn": "channel",
+        "toTable": "dim_channel",
+        "toColumn": "channel"
+      },
+      {
+        "name": "c42150a9-c7de-5b72-8589-94a4b64c615c",
+        "fromTable": "channel_monthly",
+        "fromColumn": "channel",
+        "toTable": "dim_channel",
+        "toColumn": "channel"
+      },
+      {
+        "name": "d8573ebb-4316-5609-8d64-50fc6b814adc",
+        "fromTable": "channel_monthly",
+        "fromColumn": "month_start",
+        "toTable": "dim_date",
+        "toColumn": "date_day"
+      },
+      {
+        "name": "90356296-e80d-5f4b-a918-e554d49d5d3c",
+        "fromTable": "dim_customers",
+        "fromColumn": "acquisition_channel",
+        "toTable": "dim_channel",
+        "toColumn": "channel"
+      },
+      {
+        "name": "82c2aa83-3902-5b74-a542-40c51e318e5a",
+        "fromTable": "customer_ltv",
+        "fromColumn": "user_id",
+        "toTable": "dim_customers",
+        "toColumn": "user_id"
+      },
+      {
+        "name": "1f4ac9fb-d26c-58b0-ae37-6301d62adcf4",
+        "fromTable": "clv_predictions",
+        "fromColumn": "user_id",
+        "toTable": "dim_customers",
+        "toColumn": "user_id"
+      }
+    ],
+    "expressions": [
+      {
+        "name": "ExportFolder",
+        "kind": "m",
+        "expression": "\"C:\\Users\\kanwa\\Documents\\ecommerce-funnel-ltv\\dashboard\\exports\\\" meta [IsParameterQuery = true, Type = \"Text\", IsParameterQueryRequired = true]",
+        "description": "Folder containing the dashboard CSV exports (must end with a backslash)."
+      }
+    ],
+    "annotations": [
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "0"
+      },
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"ExportFolder\", \"dim_date\", \"dim_customers\", \"fct_orders\", \"funnel_daily\", \"channel_monthly\", \"cohort_retention\", \"customer_ltv\", \"clv_predictions\", \"kpi_monthly\", \"dim_channel\", \"funnel_stage\"]"
+      }
+    ]
+  }
+}
